@@ -1,15 +1,15 @@
-resource "yandex_vpc_network" "local" {
-  name = "local"
+resource "yandex_vpc_network" "zo-cloud" {
+  name = "zo-cloud"
 }
 
-resource "yandex_vpc_subnet" "subnet-1" {
-  name           = "subnet1"
+resource "yandex_vpc_subnet" "local" {
+  name           = "local"
   zone           = "ru-central1-c"
-  network_id     = "${yandex_vpc_network.local.id}"
+  network_id     = "${yandex_vpc_network.zo-cloud.id}"
   v4_cidr_blocks = ["192.168.10.0/24"]
 }
 
-resource "yandex_compute_instance" "pubinst" {
+resource "yandex_compute_instance" "pub-inst" {
   name = "proxy"
 
   resources {
@@ -24,7 +24,7 @@ resource "yandex_compute_instance" "pubinst" {
   }
 
   network_interface {
-    subnet_id = "${yandex_vpc_subnet.subnet-1.id}"
+    subnet_id = "${yandex_vpc_subnet.local.id}"
     nat       = true
   }
 
@@ -33,12 +33,12 @@ resource "yandex_compute_instance" "pubinst" {
   }
 }
 
-resource "yandex_compute_instance" "intinst" {
+resource "yandex_compute_instance" "int-inst" {
   name = "app"
 
   resources {
-    cores  = 2
-    memory = 4
+    cores  = 1
+    memory = 1
   }
 
   boot_disk {
@@ -48,7 +48,7 @@ resource "yandex_compute_instance" "intinst" {
   }
 
   network_interface {
-    subnet_id = "${yandex_vpc_subnet.subnet-1.id}"
+    subnet_id = "${yandex_vpc_subnet.local.id}"
     nat       = true
   }
 
@@ -58,18 +58,18 @@ resource "yandex_compute_instance" "intinst" {
 }
 
 output "internal_ip_address_proxy" {
-  value = "${yandex_compute_instance.pubinst.network_interface.0.ip_address}"
+  value = "${yandex_compute_instance.pub-inst.network_interface.0.ip_address}"
 }
 
 output "internal_ip_address_app" {
-  value = "${yandex_compute_instance.intinst.network_interface.0.ip_address}"
+  value = "${yandex_compute_instance.int-inst.network_interface.0.ip_address}"
 }
 
 
 output "external_ip_address_proxy" {
-  value = "${yandex_compute_instance.pubinst.network_interface.0.nat_ip_address}"
+  value = "${yandex_compute_instance.pub-inst.network_interface.0.nat_ip_address}"
 }
 
 output "external_ip_address_app" {
-  value = "${yandex_compute_instance.intinst.network_interface.0.nat_ip_address}"
+  value = "${yandex_compute_instance.int-inst.network_interface.0.nat_ip_address}"
 }

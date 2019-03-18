@@ -1,8 +1,11 @@
-variable "yatoken" {}
+variable "ya-token" {}
+variable "ya-cloud-id" {}
+variable "ya-folder-id" {}
+variable "ya-zone" {}
 
 provider "yandex" {
-  token     = "${var.yatoken}"
-  cloud_id  = "cloud-id"
-  folder_id = "folder-id"
-  zone      = "${var.zoneid}"
+  token     = "${var.ya-token}"
+  cloud_id  = "${var.ya-cloud-id}"
+  folder_id = "${var.ya-folder-id}"
+  zone      = "${var.ya-zone}"
 }
