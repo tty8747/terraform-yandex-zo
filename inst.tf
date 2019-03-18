@@ -4,7 +4,7 @@ resource "yandex_vpc_network" "zo-cloud" {
 
 resource "yandex_vpc_subnet" "local" {
   name           = "local"
-  zone           = "ru-central1-c"
+  zone           = "${var.ya-zone}"
   network_id     = "${yandex_vpc_network.zo-cloud.id}"
   v4_cidr_blocks = ["192.168.10.0/24"]
 }
