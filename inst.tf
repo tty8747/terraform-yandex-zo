@@ -49,7 +49,7 @@ resource "yandex_compute_instance" "int-inst" {
 
   network_interface {
     subnet_id = "${yandex_vpc_subnet.local.id}"
-    nat       = true
+    nat       = false
   }
 
   metadata {
