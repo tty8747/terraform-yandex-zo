@@ -9,18 +9,40 @@ resource "yandex_vpc_subnet" "local" {
   v4_cidr_blocks = ["192.168.10.0/24"]
 }
 
+resource "yandex_compute_disk" "app-disk" {
+  name        = "app-disk"
+  description = "Disk for app and base"
+  folder_id   = "${var.ya-folder-id}"
+  type        = "network-nvme"
+  zone        = "${var.ya-zone}"
+  size        = "${var.size_disk_app}"
+
+  labels {
+    environment = "app-disk"
+  }
+}
+
 resource "yandex_compute_instance" "pub-inst" {
   name = "proxy"
+
+ allow_stopping_for_update = true
 
   resources {
     cores  = 1
     memory = 1
+    core_fraction = 5
   }
 
   boot_disk {
     initialize_params {
-      image_id = "fd87va5cc00gaq2f5qfb"
+      image_id = "fd83i5r5g44fjkdpuuva"
     }
+  }
+
+ secondary_disk {
+    disk_id     = "${yandex_compute_disk.app-disk.id}"
+    auto_delete = false
+#   device_name = "/dev/xvdb"
   }
 
   network_interface {
@@ -37,13 +59,14 @@ resource "yandex_compute_instance" "int-inst" {
   name = "app"
 
   resources {
-    cores  = 1
-    memory = 1
+    cores  = 2
+    memory = 4
   }
 
   boot_disk {
     initialize_params {
-      image_id = "fd87va5cc00gaq2f5qfb"
+      image_id = "fd8k8h8lc4qht3pcgv4t"
+      size     = 30
     }
   }
 
