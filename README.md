@@ -10,3 +10,7 @@ mv terraform.tfvars.example terraform.tfvars
 
 Получить список всех доступных идентификаторов стандартных образов:
 yc compute image list --folder-id standard-images
+
+terraform init
+terraform plan
+echo "yes" | terraform apply
